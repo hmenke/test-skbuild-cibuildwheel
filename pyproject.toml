@@ -5,3 +5,10 @@ build-backend = "scikit_build_core.build"
 [project]
 name = "example"
 version = "0.0.1"
+
+[tool.scikit-build]
+cmake.verbose = true
+
+[tool.cibuildwheel]
+build = "cp38-manylinux_x86_64"
+build-verbosity = 1
