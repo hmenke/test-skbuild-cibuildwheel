@@ -1,3 +1,10 @@
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+find_package(GSL REQUIRED)
+
+add_library(example_c SHARED example.c example.h)
+target_link_libraries(example_c PUBLIC GSL::gsl GSL::gslcblas)
+
 find_package(
   Python
   COMPONENTS Interpreter Development.Module
@@ -7,10 +14,6 @@ find_package(
   SWIG
   COMPONENTS python
   REQUIRED)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-add_library(example_c SHARED example.c example.h)
 
 include(UseSWIG)
 

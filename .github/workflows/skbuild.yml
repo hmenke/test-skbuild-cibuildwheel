@@ -25,11 +25,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        submodules: true
-    - name: Fixup Run actions/checkout
-      run: git config --global --add safe.directory '*'
+    - name: Install Linux dependencies
+      if: runner.os == 'Linux'
+      run: echo "CIBW_BEFORE_ALL=yum install -y gsl-devel" >> $GITHUB_ENV
+    - name: Install macOS dependencies
+      if: runner.os == 'macOS'
+      run: echo "CIBW_BEFORE_ALL=brew install gsl" >> $GITHUB_ENV
+    - name: Install Windows dependencies
+      if: runner.os == 'Windows'
+      run: echo "CMAKE_TOOLCHAIN_FILE=${env:VCPKG_INSTALLATION_ROOT}\scripts\buildsystems\vcpkg.cmake" | Out-File -FilePath ${env:GITHUB_ENV} -Append
     - uses: pypa/cibuildwheel@v2.16
     - name: Upload wheels
       uses: actions/upload-artifact@v3
