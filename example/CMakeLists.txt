@@ -25,6 +25,8 @@ else()
                PROPERTY SUFFIX ".${Python_SOABI}${CMAKE_SHARED_MODULE_SUFFIX}")
 endif()
 target_link_libraries(example PRIVATE example_c Python::Module)
+set_target_properties(example PROPERTIES
+  INSTALL_RPATH $<$<BOOL:${SKBUILD}>:$<$<PLATFORM_ID:Linux>:$ORIGIN>$<$<PLATFORM_ID:Darwin>:@loader_path>>)
 
 install(TARGETS example DESTINATION .)
 install(TARGETS example_c DESTINATION .)
