@@ -35,8 +35,8 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         vcpkg install --triplet x64-windows
-        echo "CMAKE_TOOLCHAIN_FILE=${env:VCPKG_INSTALLATION_ROOT}\scripts\buildsystems\vcpkg.cmake" | Tee-Object -FilePath ${env:GITHUB_ENV} -Append
-        echo "$(Get-Location)\vcpkg_installed\x64-windows\bin" | Tee-Object -FilePath ${env:GITHUB_PATH} -Append
+        echo "CMAKE_TOOLCHAIN_FILE=${env:VCPKG_INSTALLATION_ROOT}\scripts\buildsystems\vcpkg.cmake" | tee -a ${env:GITHUB_ENV}
+        echo "$(Get-Location)\vcpkg_installed\x64-windows\bin" | tee -a ${env:GITHUB_PATH}
     - uses: pypa/cibuildwheel@v2.16
     - name: Upload wheels
       uses: actions/upload-artifact@v3
