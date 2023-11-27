@@ -12,3 +12,4 @@ cmake.verbose = true
 [tool.cibuildwheel]
 build = "cp38-manylinux_x86_64"
 build-verbosity = 1
+test-command = "python -c \"import example; print(example.square(2))\""
