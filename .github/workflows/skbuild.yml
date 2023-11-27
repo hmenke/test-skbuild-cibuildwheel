@@ -12,6 +12,8 @@ env:
   CTEST_PARALLEL_LEVEL: 2
   CTEST_OUTPUT_ON_FAILURE: 1
   CXXFLAGS: "-Wall -Wextra -Wpedantic -march=broadwell"
+  VCPKG_DEFAULT_TRIPLET: "x64-windows"
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
 jobs:
   wheel:
@@ -25,19 +27,32 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v4
+
     - name: Install Linux dependencies
       if: runner.os == 'Linux'
       run: echo "CIBW_BEFORE_ALL=yum install -y gsl-devel" >> $GITHUB_ENV
+
     - name: Install macOS dependencies
       if: runner.os == 'macOS'
       run: brew install gsl
+
+    # https://learn.microsoft.com/en-us/vcpkg/users/binarycaching#gha
+    - uses: actions/github-script@v7
+      if: runner.os == 'Windows'
+      with:
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
     - name: Install Windows dependencies
       if: runner.os == 'Windows'
       run: |
-        vcpkg install --triplet x64-windows
-        echo "CMAKE_TOOLCHAIN_FILE=${env:VCPKG_INSTALLATION_ROOT}\scripts\buildsystems\vcpkg.cmake" | Tee-Object -FilePath ${env:GITHUB_ENV} -Append
-        echo "$(Get-Location)\vcpkg_installed\x64-windows\bin" | Tee-Object -FilePath ${env:GITHUB_PATH} -Append
+        vcpkg install
+        echo "CMAKE_TOOLCHAIN_FILE=${env:VCPKG_INSTALLATION_ROOT}\scripts\buildsystems\vcpkg.cmake" | tee -a ${env:GITHUB_ENV}
+        echo "$(Get-Location)\vcpkg_installed\x64-windows\bin" | tee -a ${env:GITHUB_PATH}
+
     - uses: pypa/cibuildwheel@v2.16
+
     - name: Upload wheels
       uses: actions/upload-artifact@v3
       with:
