@@ -1,6 +1,7 @@
 find_package(GSL REQUIRED)
 
-add_library(example_c SHARED example.c example.h)
+add_library(example_c SHARED example.cpp example.hpp)
+target_compile_features(example_c PRIVATE cxx_std_17)
 target_include_directories(example_c PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(example_c PUBLIC GSL::gsl GSL::gslcblas)
 
@@ -26,19 +27,15 @@ find_package(
   REQUIRED)
 
 include(UseSWIG)
+set(UseSWIG_MODULE_VERSION 1)
 
-swig_add_library(
-  example
-  LANGUAGE python OUTPUT_DIR "${SKBUILD_PLATLIB_DIR}"
-  SOURCES example.i)
-if(WIN32)
-  set_property(TARGET example PROPERTY SUFFIX ".${Python3_SOABI}.pyd")
-else()
-  set_property(TARGET example
-               PROPERTY SUFFIX ".${Python3_SOABI}${CMAKE_SHARED_MODULE_SUFFIX}")
-endif()
+set_property(SOURCE example.i PROPERTY CPLUSPLUS ON)
+swig_add_library(example LANGUAGE python SOURCES example.i)
+target_compile_features(example PRIVATE cxx_std_17)
 set_target_properties(example PROPERTIES
   CXX_EXTENSIONS OFF
+  SWIG_COMPILE_OPTIONS "-Wall;-py3"
+  SWIG_USE_TARGET_INCLUDE_DIRECTORIES ON
   SWIG_GENERATED_INCLUDE_DIRECTORIES "${Python3_INCLUDE_DIRS}"
   SWIG_GENERATED_COMPILE_OPTIONS $<$<CXX_COMPILER_ID:MSVC>:/bigobj>
   INSTALL_RPATH $<$<BOOL:${SKBUILD}>:$<$<PLATFORM_ID:Linux>:$ORIGIN>$<$<PLATFORM_ID:Darwin>:@loader_path>>)
