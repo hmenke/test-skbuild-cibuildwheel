@@ -41,15 +41,20 @@ jobs:
       if: runner.os == 'Windows'
       with:
         script: |
+          const { join } = require('path');
           core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+          core.exportVariable(
+            'CMAKE_TOOLCHAIN_FILE',
+            join(process.env.VCPKG_INSTALLATION_ROOT, 'scripts', 'buildsystems', 'vcpkg.cmake'),
+          );
+          core.addPath(
+            join(process.env.GITHUB_WORKSPACE, 'vcpkg_installed', process.env.VCPKG_DEFAULT_TRIPLET, 'bin'),
+          );
 
     - name: Install Windows dependencies
       if: runner.os == 'Windows'
-      run: |
-        vcpkg install
-        echo "CMAKE_TOOLCHAIN_FILE=${env:VCPKG_INSTALLATION_ROOT}\scripts\buildsystems\vcpkg.cmake" | tee -a ${env:GITHUB_ENV}
-        echo "$(Get-Location)\vcpkg_installed\x64-windows\bin" | tee -a ${env:GITHUB_PATH}
+      run: vcpkg install
 
     - uses: pypa/cibuildwheel@v2.16
       env:
