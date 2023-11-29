@@ -9,12 +9,13 @@ version = "0.0.1"
 [tool.scikit-build]
 cmake.verbose = true
 wheel.packages = []
+wheel.py-api = "py3"
 
 [tool.cibuildwheel]
 build = [
-  "cp310-manylinux_x86_64",
-  "cp310-win_amd64",
-  "cp310-macosx_x86_64",
+  "cp38-manylinux_x86_64",
+  "cp38-win_amd64",
+  "cp38-macosx_x86_64",
 ]
 build-verbosity = 1
 test-command = "python -c \"import example; print(example.square(2))\""
@@ -24,4 +25,4 @@ before-all = "pip install delvewheel" # build-system.requires is unavailable in 
 repair-wheel-command = "delvewheel repair --ignore-in-wheel -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos.environment]
-MACOSX_DEPLOYMENT_TARGET = "12.0"
+MACOSX_DEPLOYMENT_TARGET = "10.15"

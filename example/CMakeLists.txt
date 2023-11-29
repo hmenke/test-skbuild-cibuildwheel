@@ -9,11 +9,6 @@ find_package(
   Python3
   COMPONENTS Interpreter Development.Module
   REQUIRED)
-if(WIN32)
-  set(PY_EXT_SUFFIX ".${Python3_SOABI}.pyd")
-else()
-  set(PY_EXT_SUFFIX ".${Python3_SOABI}${CMAKE_SHARED_MODULE_SUFFIX}")
-endif()
 
 if(MSVC)
   string(REPLACE "python3${Python3_VERSION_MINOR}.lib" "python3.lib" Python3_LIBRARIES_GENERALIZED ${Python3_LIBRARIES})
@@ -39,7 +34,6 @@ swig_add_library(example LANGUAGE python SOURCES example.i)
 target_compile_features(example PRIVATE cxx_std_17)
 set_target_properties(example PROPERTIES
   CXX_EXTENSIONS OFF
-  SUFFIX ${PY_EXT_SUFFIX}
   SWIG_COMPILE_OPTIONS "-Wall;-py3"
   SWIG_USE_TARGET_INCLUDE_DIRECTORIES ON
   SWIG_GENERATED_INCLUDE_DIRECTORIES "${Python3_INCLUDE_DIRS}"
