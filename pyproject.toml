@@ -8,6 +8,7 @@ version = "0.0.1"
 
 [tool.scikit-build]
 cmake.verbose = true
+wheel.packages = []
 
 [tool.cibuildwheel]
 build = [

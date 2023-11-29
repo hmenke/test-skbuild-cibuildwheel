@@ -50,6 +50,8 @@ target_link_options(example PUBLIC
   $<$<CXX_COMPILER_ID:Clang,GNU>:-Wl,--unresolved-symbols=ignore-all>
   $<$<CXX_COMPILER_ID:MSVC>:/NODEFAULTLIB:python3${Python3_VERSION_MINOR}.lib /DEFAULTLIB:python3.lib /FORCE:UNRESOLVED>)
 target_link_libraries(example PUBLIC example_c $<$<CXX_COMPILER_ID:MSVC>:${Python3_LIBRARIES_GENERALIZED}>)
+get_property(SWIG_MODULE_example_SUPPORT_FILES TARGET example PROPERTY SWIG_SUPPORT_FILES)
 
-install(TARGETS example DESTINATION .)
-install(TARGETS example_c DESTINATION .)
+install(TARGETS example DESTINATION ${SKBUILD_PLATLIB_DIR})
+install(FILES ${SWIG_MODULE_example_SUPPORT_FILES} DESTINATION ${SKBUILD_PLATLIB_DIR})
+install(TARGETS example_c DESTINATION ${SKBUILD_PLATLIB_DIR})
