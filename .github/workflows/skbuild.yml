@@ -43,6 +43,6 @@ jobs:
         CIBW_ENVIRONMENT_PASS_LINUX: VERBOSE
 
     - name: Upload wheels
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: wheelhouse/*.whl
