@@ -32,6 +32,7 @@ jobs:
     - uses: pypa/cibuildwheel@v2.16
       env:
         CIBW_ENVIRONMENT_LINUX: >-
+          VCPKG_FORCE_SYSTEM_BINARIES=1
           VCPKG_OVERLAY_PORTS=/host/${{ env.VCPKG_OVERLAY_PORTS }}
           VCPKG_INSTALLATION_ROOT=/host/${{ env.VCPKG_INSTALLATION_ROOT }}
           CMAKE_TOOLCHAIN_FILE=/host/${{ env.CMAKE_TOOLCHAIN_FILE }}
