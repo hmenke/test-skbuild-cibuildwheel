@@ -26,16 +26,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install Linux dependencies
-      if: runner.os == 'Linux'
-      run: echo "CIBW_BEFORE_ALL=yum install -y gsl-devel" >> $GITHUB_ENV
-
-    - name: Install macOS dependencies
-      if: runner.os == 'macOS'
-      run: brew install gsl
-
-    - name: Install Windows dependencies
-      if: runner.os == 'Windows'
+    - name: Install vcpkg dependencies
       uses: ./.github/actions/setup-vcpkg
 
     - uses: pypa/cibuildwheel@v2.16
