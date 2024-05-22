@@ -16,6 +16,7 @@ build = [
   "cp38-manylinux_x86_64",
   "cp38-win_amd64",
   "cp38-macosx_x86_64",
+  "cp38-macosx_arm64",
 ]
 build-verbosity = 1
 test-command = "python -c \"import example; print(example.square(2))\""

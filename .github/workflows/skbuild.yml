@@ -35,7 +35,11 @@ jobs:
           VCPKG_OVERLAY_PORTS=/host/${{ env.VCPKG_OVERLAY_PORTS }}
           VCPKG_INSTALLATION_ROOT=/host/${{ env.VCPKG_INSTALLATION_ROOT }}
           CMAKE_TOOLCHAIN_FILE=/host/${{ env.CMAKE_TOOLCHAIN_FILE }}
-        CIBW_ENVIRONMENT_PASS_LINUX: VERBOSE VCPKG_BINARY_SOURCES
+        CIBW_ENVIRONMENT_PASS_LINUX: >-
+          ACTIONS_RUNTIME_TOKEN
+          ACTIONS_CACHE_URL
+          VCPKG_BINARY_SOURCES
+          VERBOSE
 
     - name: Upload wheels
       uses: actions/upload-artifact@v3
