@@ -33,7 +33,11 @@ vcpkg_cmake_configure(
 
 vcpkg_cmake_install()
 
-vcpkg_cmake_config_fixup(CONFIG_PATH "lib/cmake/DuckDB")
+if(EXISTS "${CURRENT_PACKAGES_DIR}/lib/cmake/DuckDB")
+  vcpkg_cmake_config_fixup(CONFIG_PATH "lib/cmake/DuckDB")
+elseif(EXISTS "${CURRENT_PACKAGES_DIR}/lib/cmake/duckdb")
+  vcpkg_cmake_config_fixup(CONFIG_PATH "lib/cmake/duckdb")
+endif()
 vcpkg_replace_string("${CURRENT_PACKAGES_DIR}/share/${PORT}/DuckDBConfig.cmake"
 [[set(DuckDB_INCLUDE_DIRS "${DuckDB_CMAKE_DIR}/../../../include")]]
 [[get_filename_component(DuckDB_INCLUDE_DIRS "${DuckDB_CMAKE_DIR}" PATH)

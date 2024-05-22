@@ -31,6 +31,7 @@ jobs:
 
     - uses: pypa/cibuildwheel@v2.16
       env:
+        CIBW_BEFORE_ALL_LINUX: yum install -y curl kernel-devel perl-IPC-Cmd tar unzip zip
         CIBW_ENVIRONMENT_LINUX: >-
           VCPKG_FORCE_SYSTEM_BINARIES=1
           VCPKG_OVERLAY_PORTS=/host/${{ env.VCPKG_OVERLAY_PORTS }}
