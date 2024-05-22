@@ -30,9 +30,9 @@ runs:
             VCPKG_INSTALLATION_ROOT = join(GITHUB_ACTION_PATH, 'vcpkg'),
           } = process.env;
           core.exportVariable('VCPKG_BINARY_SOURCES', VCPKG_BINARY_SOURCES);
-          core.exportVariable('VCPKG_DEFAULT_TRIPLET', VCPKG_DEFAULT_TRIPLET);
           core.exportVariable('VCPKG_OVERLAY_PORTS', VCPKG_OVERLAY_PORTS);
           core.exportVariable('VCPKG_INSTALLATION_ROOT', VCPKG_INSTALLATION_ROOT);
+          core.exportVariable('__VCPKG_INSTALLED', (VCPKG_INSTALLATION_ROOT !== join(GITHUB_ACTION_PATH, 'vcpkg').toString()));
           core.exportVariable(
             'CMAKE_TOOLCHAIN_FILE',
             join(VCPKG_INSTALLATION_ROOT, 'scripts', 'buildsystems', 'vcpkg.cmake'),
@@ -40,6 +40,7 @@ runs:
           core.addPath(join(GITHUB_WORKSPACE, 'vcpkg_installed', VCPKG_DEFAULT_TRIPLET, 'bin'));
 
     - name: Checkout vcpkg
+      if: env.__VCPKG_INSTALLED == 'false'
       uses: actions/checkout@v3
       with:
         repository: microsoft/vcpkg
@@ -47,12 +48,12 @@ runs:
         ref: bd2b54836beed96e1efbe9aaf8ee800f5448856d
 
     - name: Bootstrap vcpkg
-      if: runner.os != 'Windows'
+      if: runner.os != 'Windows' && env.__VCPKG_INSTALLED == 'false'
       shell: bash
       run: ${{ env.VCPKG_INSTALLATION_ROOT }}/bootstrap-vcpkg.sh
 
     - name: Bootstrap vcpkg
-      if: runner.os == 'Windows'
+      if: runner.os == 'Windows' && env.__VCPKG_INSTALLED == 'false'
       shell: cmd
       run: ${{ env.VCPKG_INSTALLATION_ROOT }}\bootstrap-vcpkg.bat
 
