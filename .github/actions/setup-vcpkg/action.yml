@@ -7,6 +7,12 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Test
+      shell: bash
+      run: |
+        echo "$VCPKG_INSTALLATION_ROOT"
+        echo "${{ env.VCPKG_INSTALLATION_ROOT }}"
+
     # https://learn.microsoft.com/en-us/vcpkg/users/binarycaching#gha
     - name: Set up environment variables
       uses: actions/github-script@v7
@@ -16,19 +22,40 @@ runs:
           core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
           const { join } = require('path');
           const {
+            GITHUB_ACTION_PATH,
             GITHUB_WORKSPACE,
             VCPKG_BINARY_SOURCES = 'clear;x-gha,readwrite',
             VCPKG_DEFAULT_TRIPLET = '${{ runner.arch }}-${{ runner.os }}'.toLowerCase(),
-            VCPKG_INSTALLATION_ROOT,
+            VCPKG_OVERLAY_PORTS = join(GITHUB_ACTION_PATH, 'overlay'),
+            VCPKG_INSTALLATION_ROOT = join(GITHUB_ACTION_PATH, 'vcpkg'),
           } = process.env;
           core.exportVariable('VCPKG_BINARY_SOURCES', VCPKG_BINARY_SOURCES);
           core.exportVariable('VCPKG_DEFAULT_TRIPLET', VCPKG_DEFAULT_TRIPLET);
+          core.exportVariable('VCPKG_OVERLAY_PORTS', VCPKG_OVERLAY_PORTS);
+          core.exportVariable('VCPKG_INSTALLATION_ROOT', VCPKG_INSTALLATION_ROOT);
           core.exportVariable(
             'CMAKE_TOOLCHAIN_FILE',
             join(VCPKG_INSTALLATION_ROOT, 'scripts', 'buildsystems', 'vcpkg.cmake'),
           );
           core.addPath(join(GITHUB_WORKSPACE, 'vcpkg_installed', VCPKG_DEFAULT_TRIPLET, 'bin'));
 
+    - name: Checkout vcpkg
+      uses: actions/checkout@v3
+      with:
+        repository: microsoft/vcpkg
+        path: ${{ env.VCPKG_INSTALLATION_ROOT }}
+        ref: bd2b54836beed96e1efbe9aaf8ee800f5448856d
+
+    - name: Bootstrap vcpkg
+      if: runner.os != 'Windows'
+      shell: bash
+      run: ${{ env.VCPKG_INSTALLATION_ROOT }}/bootstrap-vcpkg.sh
+
+    - name: Bootstrap vcpkg
+      if: runner.os == 'Windows'
+      shell: cmd
+      run: ${{ env.VCPKG_INSTALLATION_ROOT }}\bootstrap-vcpkg.bat
+
     - name: Run vcpkg install
-      shell: pwsh
-      run: vcpkg install ${{ inputs.args }}
+      shell: bash
+      run: ${{ env.VCPKG_INSTALLATION_ROOT }}/vcpkg install ${{ inputs.args }}

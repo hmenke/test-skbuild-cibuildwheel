@@ -2,6 +2,21 @@
     "name": "example",
     "version-string": "1",
     "dependencies": [
-	"gsl"
+        "cereal",
+        {
+            "name": "cpp-httplib",
+            "features": [ "openssl" ]
+        },
+        "doctest",
+        "duckdb",
+        "eigen3",
+        "fmt",
+        "gsl",
+        "nlohmann-json",
+        "spdlog",
+        {
+            "name": "sqlite3",
+            "features": [ "tool" ]
+        }
     ]
 }
